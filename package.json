@@ -7,10 +7,11 @@
     "clean": "rimraf public",
     "dev:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --watch",
     "dev:eleventy": "npx @11ty/eleventy --serve",
+    "build:js": "esbuild src/js/main.js --bundle --outfile=_site/js/main.js",
     "build:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --minify",
     "build:eleventy": "ELEVENTY_PRODUCTION=true npx @11ty/eleventy",
     "dev": "npm-run-all clean --parallel dev:*",
-    "build": "NODE_ENV=production npm-run-all clean build:eleventy build:tailwind"
+    "build": "NODE_ENV=production npm-run-all clean build:js build:eleventy build:tailwind"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
   "homepage": "https://github.com/mulletech/gusty#readme",
   "devDependencies": {
     "@11ty/eleventy": "^1.0.2",
+    "esbuild": "^0.17.4",
     "npm-run-all": "^4.1.5",
     "rimraf": "^4.1.2",
     "tailwindcss": "^3.2.4"
