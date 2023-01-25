@@ -4,9 +4,9 @@
   "description": "Hyper-minimal starter for Eleventy with support for Tailwind CSS.",
   "scripts": {
     "clean": "rimraf public",
-    "dev:tailwind": "npx tailwindcss -i src/css/tailwind.css -o public/css/styles.css --watch",
+    "dev:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --watch",
     "dev:eleventy": "npx @11ty/eleventy --serve",
-    "build:tailwind": "npx tailwindcss -i src/css/tailwind.css -o public/css/styles.css --minify",
+    "build:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --minify",
     "build:eleventy": "ELEVENTY_PRODUCTION=true npx @11ty/eleventy",
     "dev": "npm-run-all clean --parallel dev:*",
     "build": "NODE_ENV=production npm-run-all clean build:eleventy build:tailwind"
