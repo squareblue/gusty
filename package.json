@@ -2,6 +2,7 @@
   "name": "gusty",
   "version": "1.0.1",
   "description": "Hyper-minimal starter for Eleventy with support for Tailwind CSS.",
+  "main": "src/index.html",
   "scripts": {
     "clean": "rimraf public",
     "dev:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --watch",
