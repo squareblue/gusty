@@ -7,7 +7,9 @@
 }
 
 @layer components {
-
+  footer {
+    font-size: 12px;
+  }
 }
 
 @layer utilities {

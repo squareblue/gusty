@@ -6,7 +6,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy('./src/img');
 
   return {
-    htmlTemplateEngine: 'njk',
+    // htmlTemplateEngine: 'njk',
     dir: {
       input: 'src',
       output: '_site'

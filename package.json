@@ -5,6 +5,7 @@
   "main": "src/index.html",
   "scripts": {
     "clean": "rimraf public",
+    "dev:js": "esbuild src/js/main.js --bundle --outdir=_site/js --watch",
     "dev:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --watch",
     "dev:eleventy": "npx @11ty/eleventy --serve",
     "build:js": "esbuild src/js/main.js --bundle --outfile=_site/js/main.js",
