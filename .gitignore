@@ -1,3 +1,13 @@
+# Dependencies
 node_modules/
-public/
-.idea
+
+# Output
+_site/
+
+# IDEs
+.idea/
+.vscode
+
+# Misc
+.private/
+*-----*
