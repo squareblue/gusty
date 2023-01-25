@@ -1,0 +1,36 @@
+{
+  "name": "gusty",
+  "version": "1.0.1",
+  "description": "Hyper-minimal starter for Eleventy with support for Tailwind CSS.",
+  "scripts": {
+    "clean": "rimraf public",
+    "dev:tailwind": "npx tailwindcss -i src/css/tailwind.css -o public/css/styles.css --watch",
+    "dev:eleventy": "npx @11ty/eleventy --serve",
+    "build:tailwind": "npx tailwindcss -i src/css/tailwind.css -o public/css/styles.css --minify",
+    "build:eleventy": "ELEVENTY_PRODUCTION=true npx @11ty/eleventy",
+    "dev": "npm-run-all clean --parallel dev:*",
+    "build": "NODE_ENV=production npm-run-all clean build:eleventy build:tailwind"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mulletech/gusty.git"
+  },
+  "keywords": [
+    "eleventy",
+    "11ty",
+    "tailwind",
+    "tailwindcss"
+  ],
+  "author": "Mulletech",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mulletech/gusty/issues"
+  },
+  "homepage": "https://github.com/mulletech/gusty#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^1.0.2",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^4.1.1",
+    "tailwindcss": "^3.2.4"
+  }
+}
