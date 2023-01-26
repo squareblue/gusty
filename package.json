@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mulletech/gusty.git"
+    "url": "git@github.com:squareblue/gusty.git"
   },
   "keywords": [
     "eleventy",
@@ -24,12 +24,12 @@
     "tailwind",
     "tailwindcss"
   ],
-  "author": "Mulletech",
+  "author": "Square Blue",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mulletech/gusty/issues"
+    "url": "https://github.com/squareblue/gusty/issues"
   },
-  "homepage": "https://github.com/mulletech/gusty#readme",
+  "homepage": "https://squareblue.dev/gusty",
   "devDependencies": {
     "@11ty/eleventy": "^1.0.2",
     "esbuild": "^0.17.4",
