@@ -1,6 +1,7 @@
-# Gusty
+# Gusty 🚶💨
 
-Hyper-minimalist [Eleventy](https://www.11ty.dev/) starter with support for Tailwind CSS.
+Hyper-minimalist [Eleventy](https://www.11ty.dev/) starter with support for
+[Tailwind CSS](https://tailwindcss.com/).
 
 > Credit to creator of [jet](https://github.com/marcamos/jet) for a good starting point.
 
