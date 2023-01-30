@@ -8,7 +8,7 @@
     "dev:js": "esbuild src/js/main.js --bundle --outdir=_site/js --watch",
     "dev:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --watch",
     "dev:eleventy": "npx @11ty/eleventy --serve",
-    "build:js": "esbuild src/js/main.js --bundle --minify --sourcemap --target=es2020 --outfile=_site/js/main.js",
+    "build:js": "esbuild src/js/main.js --bundle --minify --sourcemap --target=es2018 --outfile=_site/js/main.js",
     "build:tailwind": "npx tailwindcss -i src/css/main.css -o _site/css/main.css --minify",
     "build:eleventy": "ELEVENTY_PRODUCTION=true npx @11ty/eleventy",
     "dev": "npm-run-all clean --parallel dev:*",
