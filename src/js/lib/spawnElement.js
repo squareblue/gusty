@@ -54,13 +54,16 @@ export function spawnElement(tag = 'span', props = [], children = []) {
 }
 
 /**
- * Spawn HTML strings from spawnElement-type patterns
+ * Static method to return an HTML string instead of DOM element(s)
  */
-export function spawnHTML(tag, cfg, children) {
+spawnElement.html = (tag, cfg, children) => {
   const xx = document.createElement('x-x');
   xx.appendChild(spawnElement(tag, cfg, children));
   return xx.innerHTML;
 }
+// aliases(?)
+spawnElement.toHTML = spawnElement.html;
+spawnElement.asHTML = spawnElement.html;
 
 function applyProps(elem, props) {
   // iterate cfg object

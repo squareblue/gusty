@@ -3,7 +3,7 @@
  */
 import { link } from './components/link';
 import { footer } from './components/footer';
-import { spawnHTML } from './lib/spawnHTML';
+import { spawnElement } from './lib/spawnElement';
 
 function clickLi(e, li) {
   console.log(e);
@@ -26,7 +26,7 @@ ${link({
   })}
 <span class="px-4">|</span>
 ${
-    spawnHTML('a', [
+    spawnElement.html('a', [
       {
         // use '$' prefix to explicitly call .setAttribute()
         $href: 'https://github.com/squareblue/gusty/',
