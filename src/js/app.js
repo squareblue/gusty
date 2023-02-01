@@ -3,10 +3,10 @@
  */
 import { link } from './components/link';
 import { footer } from './components/footer';
-import { spawnElement } from './lib/spawnElement';
+import { resolveContext, spawnElement } from './lib/spawnElement';
 
 export function app(selector) {
-  const parentContainer = document.querySelector(selector);
+  const parentContainer = resolveContext(selector);
   parentContainer.insertAdjacentHTML('beforeend', footer(`
 <p class="mt-4">
 &copy; 2023 Square Blue 

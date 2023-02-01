@@ -181,7 +181,7 @@ function setElementData(elem, prop, data) {
   }
 }
 
-function resolveContext(context) {
+export function resolveContext(context) {
   // Allow passing a reference to an existing element?
   if (context instanceof HTMLElement) {
     return context;
