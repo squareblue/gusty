@@ -7,32 +7,36 @@ import { randomId } from './randomId';
  * @param {Array<string|Node|Array|Function>} children
  * @returns {*}
  */
-export function spawnElement(tag = 'span', props = [], children = []) {
+export function spawnElement(tag = 'span', props = null, children = []) {
   const elem = document.createElement(tag);
 
-  if (Array.isArray(props)) {
-    // `props` can be an array. this allows the use
-    // of functions to modify the generated element,
-    // and preserves the order of execution if one
-    // step depends on the result of a previous step
-    [...props].forEach((cfg) => {
-      // execute function to modify element
-      if (typeof cfg === 'function') {
-        cfg(elem);
-        return elem;
-      }
-      // or apply 'props' config values
-      applyProps(elem, cfg);
-    });
-  }
-  else {
-    applyProps(elem, props);
+  if (props) {
+    if (Array.isArray(props)) {
+      // `props` can be an array. this allows the use
+      // of functions to modify the generated element,
+      // and preserves the order of execution if one
+      // step depends on the result of a previous step
+      [...props].forEach((cfg) => {
+        // execute function to modify element
+        if (typeof cfg === 'function') {
+          cfg(elem);
+          return elem;
+        }
+        // or apply 'props' config values
+        applyProps(elem, cfg);
+      });
+    }
+    else {
+      applyProps(elem, props);
+    }
   }
 
-  if (children && children.length) {
-    for (const child of [].concat(children)) {
+  const childArray = [].concat(children);
+
+  if (childArray.length) {
+    for (const child of childArray) {
       if (Array.isArray(child)) {
-        const [tag, props = [], children = []] = child;
+        const [tag, props, children] = child;
         elem.appendChild(spawnElement(tag, props, children));
         continue;
       }
@@ -45,7 +49,7 @@ export function spawnElement(tag = 'span', props = [], children = []) {
         document.DOCUMENT_FRAGMENT_NODE,
         document.TEXT_NODE
       ].includes(child.nodeType)) {
-        elem.appendChild(child);
+        elem.append(child);
       }
     }
   }
@@ -80,11 +84,14 @@ function applyProps(elem, props) {
 
 function setElementAttributes(elem, $attr, value) {
   // use $ prefix to explicitly call 'setAttribute()'
-  const prefix = /^[$]/;
+  const attrPrefix = /^[$]/;
+  // use _ prefix to explicitly assign element property
+  const propPrefix = /^_/;
 
-  if (prefix.test($attr)) {
+  if (attrPrefix.test($attr)) {
+    const attrName = $attr.replace(attrPrefix, '');
     try {
-      elem.setAttribute($attr.replace(prefix, ''), value);
+      elem.setAttribute(attrName, value);
     }
     catch (e) {
       console.error(e);
@@ -95,8 +102,24 @@ function setElementAttributes(elem, $attr, value) {
     // style or event listeners, etc)
     return true;
   }
+
+  if (propPrefix.test($attr)) {
+    const propName = $attr.replace(propPrefix, '');
+    try {
+      elem[propName] = value;
+    }
+    catch (e) {
+      console.error(e);
+    }
+    // return true even if the property isn't set
+    // since the _intention_ of calling this function
+    // was to set a property value (so don't try setting
+    // style or event listeners, etc)
+    return true;
+  }
+
   // also allow use of an object named 'attr'
-  if ($attr === 'attr' && isPlainObject(value)) {
+  if (/^attr(s)?$/.test($attr) && isPlainObject(value)) {
     for (const [attr, val] of Object.entries(value)) {
       try {
         elem.setAttribute(attr, val);
@@ -132,7 +155,7 @@ function setElementStyle(elem, prop, style) {
       for (const [prop, value] of Object.entries(style)) {
         try {
           // assume 'px' unit for number values
-          elem.style[prop] = value === (value - 0) ? `${value}px` : value;
+          elem.style[prop] = value === (value + 0) ? `${value}px` : value;
         }
         catch (e) {
           console.error(e);
@@ -158,6 +181,22 @@ function setElementData(elem, prop, data) {
   }
 }
 
+function resolveContext(context) {
+  // Allow passing a reference to an existing element?
+  if (context instanceof HTMLElement) {
+    return context;
+  }
+  else if (typeof context === 'string') {
+    // fallback to `document` if no element matches the selector
+    return document.querySelector(context) || document;
+  }
+  else {
+    // if `context` isn't a string or a reference to a parent element
+    // ...what is it??? (just assign to `document`)
+    return document;
+  }
+}
+
 function getEventIds(elem) {
   return elem.dataset.events
     ? elem.dataset.events.trim().split(/\s+/)
@@ -173,6 +212,7 @@ function setEventIds(elem, id = '') {
 export const documentEvents = {
   // example:   (this does nothing)
   ezczybv2lxd: {
+    id: 'ezczybv2lxd', // auto-generated if not specified
     type: 'click',
     handler: (e, elem) => {
       elem.classList.add('bogus');
@@ -184,56 +224,50 @@ export const documentEvents = {
 /**
  * Add event handler to a parent element (defaults to document)
  * @param { HTMLElement } elem - reference to DOM element to 'bind' to
- * @param { string } evtType - what type of event? ('click', 'mouseover', etc)
- * @param { function | Array<string|HTMLElement|document, function> } handler ...
+ * @param { { type?: string, id?: string, eventId?: string } } eventData - event type or id ('click', 'mouseover', etc)
+ * @param { function | Array<string|HTMLElement|document, function> } [handler] ...
  *        ...function to call on `elem` with optional parent selector
  */
-function delegateHandler(elem, evtType, handler) {
-  // set a unique event id on the element and return the value
-  const evtId = randomId('e');
+function delegateHandler(elem, eventData, handler) {
+
+  const {
+    type: eventType,
+    id = randomId('e'),
+    eventId = id
+  } = eventData;
 
   // add event id to a space-separated list stored
   // in the element's 'data-events' attribute
-  elem.dataset.events = setEventIds(elem, evtId);
+  elem.dataset.events = setEventIds(elem, eventId);
 
   // concat (to force an array) then destructure to
   // extract the parent 'context' and handler function
   const handlerParams = [].concat(handler);
 
-  let [context, evtHandler] = handlerParams;
+  let [context, eventHandler] = handlerParams;
 
   if (handlerParams.length === 1) {
-    evtHandler = handlerParams[0];
+    eventHandler = handlerParams[0];
     context = document;
   }
   else {
-    // Allow passing a reference to an existing element?
-    if (context instanceof HTMLElement) {
-      // do nothing since we've got our parent context
-    }
-    else if (typeof context === 'string') {
-      // fallback to `document` if no element matches the selector
-      context = document.querySelector(context) || document;
-    }
-    else {
-      // if `context` isn't a string or a reference to a parent element
-      // ...what is it??? (just assign to `document`)
-      context = document;
-    }
+    context = resolveContext(context);
   }
 
   // assign the stored event object to a local variable
   // as well as a property on the exported `documentEvents` object
-  const storedEvent = documentEvents[evtId] = {
-    type: evtType,
-    handler: evtHandler
+  const storedEvent = documentEvents[eventId] = {
+    id: eventId,
+    type: eventType,
+    handler: eventHandler
   };
+
   // is it best to remove listeners before adding one?
   // probably doesn't hurt... or matter.
   try {
-    context.removeEventListener(evtType, storedEvent.handler);
-    context.addEventListener(evtType, (e) => {
-      if (e.target?.dataset?.events?.includes(evtId)) {
+    context.removeEventListener(eventType, storedEvent.handler);
+    context.addEventListener(eventType, (e) => {
+      if (e.target?.dataset?.events?.includes(eventId)) {
         // console.log(e.target);
         // pass reference to target element as second argument
         storedEvent.handler(e, e.target);
@@ -248,9 +282,12 @@ function delegateHandler(elem, evtType, handler) {
 function setEventListeners(elem, prop, handler) {
   // handle 'on' object with individual handler methods
   if (prop === 'on') {
-    for (let [evtType, evtHandler] of Object.entries(handler)) {
+    for (let [eventType, eventHandler] of Object.entries(handler)) {
       try {
-        delegateHandler(elem, evtType, evtHandler);
+        delegateHandler(elem, {
+          type: eventType,
+          handler: eventHandler
+        });
       }
       catch (e) {
         console.error(e);
@@ -262,11 +299,11 @@ function setEventListeners(elem, prop, handler) {
   // handle 'on*' properties and delegate handlers to document
   if (prop.startsWith('on')) {
     try {
-      const evtType = prop.toLowerCase().replace(/^on/, '');
+      const eventType = prop.toLowerCase().replace(/^on/, '');
       // Create unique id and delegate events to document.
       // This should allow event listeners to fire
       // even if the rendered output is an HTML string.
-      delegateHandler(elem, evtType, handler);
+      delegateHandler(elem, { type: eventType, handler });
     }
     catch (e) {
       console.error(e);
