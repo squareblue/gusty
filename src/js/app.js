@@ -5,31 +5,35 @@ import { link } from './components/link';
 import { footer } from './components/footer';
 import { spawnElement } from './lib/spawnElement';
 
-function clickLi(e, li) {
-  console.log(e);
-  console.log(li.textContent);
-}
-
-let countA = 0;
-let countB = 0;
-
 export function app(selector) {
-document.querySelector(selector).insertAdjacentHTML('beforeend', footer(`
+  const parentContainer = document.querySelector(selector);
+  parentContainer.insertAdjacentHTML('beforeend', footer(`
 <p class="mt-4">
 &copy; 2023 Square Blue 
 <span class="px-4">|</span>
 ${link({
     id: 'squareblue-website',
     href: 'https://squareblue.dev',
-    target: '_blank',
-    'class': 'underline'
-  })}
+    $target: '_blank',
+    $title: 'A Square Blue Development',
+    $class: 'underline',
+    // className: 'underline', // 'className' can also be used, but only one class value will 'stick'
+    onclick: (e, a) => {
+      e.preventDefault();
+      console.log(e.target);
+      console.log(e.currentTarget);
+      console.log(a.href);
+    }
+  })
+}
 <span class="px-4">|</span>
 ${
     spawnElement.html('a', [
       {
         // use '$' prefix to explicitly call .setAttribute()
-        $href: 'https://github.com/squareblue/gusty/',
+        $title: 'Gusty repo',
+        // use '_' prefix to directly set an element property
+        _href: 'https://github.com/squareblue/gusty/',
         // use 'attr' object used for .setAttribute(propName, propValue)
         attr: {
           target: '_blank'  
@@ -41,22 +45,29 @@ ${
         },
         onclick: (e, a) => {
           e.preventDefault();
+          console.log(e.target);
           console.log(e.currentTarget);
           console.log(a.href);
         },
-        // bind listener to '#root' but only execute
+        // bind listener to parentContainer but only execute
         // when target is the element being spawned here
         // (useful to prevent calling handlers many many times 
         // for events that fire a lot like 'mousemove')
         // this works even for content rendered as HTML strings
         // as long as the parent context selector/element exists in
         // the document when this element is spawned
-        onmouseover: ['#root', (e, a) => {
-          console.log(a.href);
-        }]
+        on: {
+          mouseover: [parentContainer, (e, a) => {
+            e.preventDefault();
+            console.log(e.target);
+            console.log(e.currentTarget);
+            console.log(a.href);
+          }]
+        }
       },
-      (a) => a.classList.add('underline')
-    ], 'GitHub')
+      (a) => a.classList.add('underline'),
+      (a) => a.textContent = 'GitHub'
+    ])
 }
 </p>
 `
