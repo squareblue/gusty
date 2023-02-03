@@ -2,6 +2,22 @@
   "name": "gusty",
   "version": "1.0.1",
   "description": "Hyper-minimal starter for Eleventy with support for Tailwind CSS.",
+  "author": "Square Blue",
+  "license": "MIT",
+  "keywords": [
+    "eleventy",
+    "11ty",
+    "tailwind",
+    "tailwindcss"
+  ],
+  "homepage": "https://squareblue.dev/gusty",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:squareblue/gusty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/squareblue/gusty/issues"
+  },
   "main": "src/index.html",
   "scripts": {
     "clean": "rimraf _site",
@@ -14,22 +30,6 @@
     "dev": "npm-run-all clean --parallel dev:*",
     "build": "NODE_ENV=production npm-run-all clean build:js build:eleventy build:tailwind"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:squareblue/gusty.git"
-  },
-  "keywords": [
-    "eleventy",
-    "11ty",
-    "tailwind",
-    "tailwindcss"
-  ],
-  "author": "Square Blue",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/squareblue/gusty/issues"
-  },
-  "homepage": "https://squareblue.dev/gusty",
   "devDependencies": {
     "@11ty/eleventy": "^1.0.2",
     "esbuild": "^0.17.4",
