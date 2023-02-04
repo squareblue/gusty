@@ -1,9 +1,9 @@
 import { randomId } from './randomId';
 
 /**
- *
+ * Main function for creating DOM elements
  * @param {string} tag
- * @param {Array<{[key]: any, data?: {[key]: string}}|Function>} props
+ * @param {Array<{[k: string]: any}|Function>|{[k: string]: any}} props
  * @param {Array<string|Node|Array|Function>} children
  * @returns {*}
  */
@@ -181,6 +181,12 @@ function setElementData(elem, prop, data) {
   }
 }
 
+/**
+ * Return an element or `document` to be used as a
+ * 'parent' of a spawned or selected child element
+ * @param {string|HTMLElement|document} context
+ * @returns {HTMLElement|document}
+ */
 export function resolveContext(context) {
   // Allow passing a reference to an existing element?
   if (context instanceof HTMLElement) {
@@ -197,14 +203,8 @@ export function resolveContext(context) {
   }
 }
 
-function getEventIds(elem) {
-  return elem.dataset.events
-    ? elem.dataset.events.trim().split(/\s+/)
-    : [];
-}
-
-function setEventIds(elem, id = '') {
-  return [...new Set([...getEventIds(elem), id || randomId('e')])].join(' ');
+function mergeEventIds(events, id = '') {
+  return [...new Set([...events.trim().split(/\s+/), id || randomId('e')])].join(' ');
 }
 
 // event handlers stored in this object are bound to the document
@@ -223,7 +223,7 @@ export const documentEvents = {
 
 /**
  * Add event handler to a parent element (defaults to document)
- * @param { HTMLElement } elem - reference to DOM element to 'bind' to
+ * @param { HTMLElement } elem - reference to event target element
  * @param { { type?: string, id?: string, eventId?: string } } eventData - event type or id ('click', 'mouseover', etc)
  * @param { function | Array<string|HTMLElement|document, function> } [handler] ...
  *        ...function to call on `elem` with optional parent selector
@@ -238,7 +238,7 @@ function delegateHandler(elem, eventData, handler) {
 
   // add event id to a space-separated list stored
   // in the element's 'data-events' attribute
-  elem.dataset.events = setEventIds(elem, eventId);
+  elem.dataset.events = mergeEventIds(elem.dataset.events, eventId);
 
   // concat (to force an array) then destructure to
   // extract the parent 'context' and handler function
