@@ -2,8 +2,10 @@
  * Render `content` in a <footer> element
  */
 
-export const footer = (content) => `
-<footer class="mt-4 border-t text-center">
-  ${content}
-</footer>
-`;
+export function footer(content) {
+  return [
+    `<footer class="mt-4 border-t text-center">`,
+    content,
+    `</footer>`
+  ].join('');
+}
