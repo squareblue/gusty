@@ -1,4 +1,4 @@
-const { execSync } = require("child_process");
+const { execSync } = require('child_process');
 
 module.exports = function(eleventyConfig) {
   eleventyConfig.setUseGitIgnore(false);
@@ -9,7 +9,7 @@ module.exports = function(eleventyConfig) {
     // htmlTemplateEngine: 'njk',
     dir: {
       input: 'src',
-      output: '_site'
-    }
-  }
-}
+      output: '_site',
+    },
+  };
+};

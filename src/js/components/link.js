@@ -12,6 +12,6 @@ export function link(attrs, content) {
 
   return spawnElement.html('a', {
     ...otherAttrs,
-    $href
+    $href,
   }, [].concat(content || $href));
 }

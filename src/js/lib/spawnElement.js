@@ -25,8 +25,7 @@ export function spawnElement(tag = 'span', props = null, children = []) {
         // or apply 'props' config values
         applyProps(elem, cfg);
       });
-    }
-    else {
+    } else {
       applyProps(elem, props);
     }
   }
@@ -47,7 +46,7 @@ export function spawnElement(tag = 'span', props = null, children = []) {
       if ([
         document.ELEMENT_NODE,
         document.DOCUMENT_FRAGMENT_NODE,
-        document.TEXT_NODE
+        document.TEXT_NODE,
       ].includes(child.nodeType)) {
         elem.append(child);
       }
@@ -64,7 +63,7 @@ spawnElement.html = (tag, cfg, children) => {
   const xx = document.createElement('x-x');
   xx.appendChild(spawnElement(tag, cfg, children));
   return xx.innerHTML;
-}
+};
 // aliases(?)
 spawnElement.toHTML = spawnElement.html;
 spawnElement.asHTML = spawnElement.html;
@@ -150,12 +149,11 @@ function setElementStyle(elem, prop, style) {
   if (prop === 'style') {
     if (typeof style === 'string') {
       elem.setAttribute('style', style);
-    }
-    else {
+    } else {
       for (const [prop, value] of Object.entries(style)) {
         try {
           // assume 'px' unit for number values
-          elem.style[prop] = value === (value + 0) ? `${value}px` : value;
+          elem.style[prop] = (value === value * 1) ? `${value}px` : value;
         }
         catch (e) {
           console.error(e);
@@ -184,19 +182,17 @@ function setElementData(elem, prop, data) {
 /**
  * Return an element or `document` to be used as a
  * 'parent' of a spawned or selected child element
- * @param {string|HTMLElement|document} context
- * @returns {HTMLElement|document}
+ * @param {string|HTMLElement|Document} context
+ * @returns {HTMLElement|Document}
  */
 export function resolveContext(context) {
   // Allow passing a reference to an existing element?
   if (context instanceof HTMLElement) {
     return context;
-  }
-  else if (typeof context === 'string') {
+  } else if (typeof context === 'string') {
     // fallback to `document` if no element matches the selector
     return document.querySelector(context) || document;
-  }
-  else {
+  } else {
     // if `context` isn't a string or a reference to a parent element
     // ...what is it??? (just assign to `document`)
     return document;
@@ -217,15 +213,15 @@ export const documentEvents = {
     handler: (e, elem) => {
       elem.classList.add('bogus');
       console.log('Added "bogus" class');
-    }
-  }
+    },
+  },
 };
 
 /**
  * Add event handler to a parent element (defaults to document)
  * @param { HTMLElement } elem - reference to event target element
  * @param { { type?: string, id?: string, eventId?: string } } eventData - event type or id ('click', 'mouseover', etc)
- * @param { function | Array<string|HTMLElement|document, function> } [handler] ...
+ * @param { function | Array<string|HTMLElement|Document, function> } [handler] ...
  *        ...function to call on `elem` with optional parent selector
  */
 function delegateHandler(elem, eventData, handler) {
@@ -233,7 +229,7 @@ function delegateHandler(elem, eventData, handler) {
   const {
     type: eventType,
     id = randomId('e'),
-    eventId = id
+    eventId = id,
   } = eventData;
 
   // add event id to a space-separated list stored
@@ -249,8 +245,7 @@ function delegateHandler(elem, eventData, handler) {
   if (handlerParams.length === 1) {
     eventHandler = handlerParams[0];
     context = document;
-  }
-  else {
+  } else {
     context = resolveContext(context);
   }
 
@@ -259,7 +254,7 @@ function delegateHandler(elem, eventData, handler) {
   const storedEvent = documentEvents[eventId] = {
     id: eventId,
     type: eventType,
-    handler: eventHandler
+    handler: eventHandler,
   };
 
   // is it best to remove listeners before adding one?
@@ -273,7 +268,8 @@ function delegateHandler(elem, eventData, handler) {
         storedEvent.handler(e, e.target);
       }
     });
-  } catch (e) {
+  }
+  catch (e) {
     console.error(e);
   }
 }
@@ -286,7 +282,7 @@ function setEventListeners(elem, prop, handler) {
       try {
         delegateHandler(elem, {
           type: eventType,
-          handler: eventHandler
+          handler: eventHandler,
         });
       }
       catch (e) {
@@ -322,6 +318,6 @@ function setElementProperty(elem, prop, value) {
   }
 }
 
-function isPlainObject( obj ){
+function isPlainObject(obj) {
   return Object.prototype.toString.call(obj) === '[object Object]';
 }

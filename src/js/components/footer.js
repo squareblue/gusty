@@ -6,6 +6,6 @@ export function footer(content) {
   return [
     `<footer class="mt-4 border-t text-center">`,
     content,
-    `</footer>`
+    `</footer>`,
   ].join('');
 }
